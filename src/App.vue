@@ -2,13 +2,14 @@
 import useTodoList from "./composition/useTodoList";
 import useNewTodo from "./composition/useNewTodo";
 import useFilter from "./composition/useFilter";
+import { useEditTodo } from "./composition/useEditTodo";
 export default {
   setup() {
     return {
       todosRef: useTodoList().todosRef,
       ...useNewTodo(todosRef),
       ...useFilter(todosRef),
-      // filteredTodos(todosRef,),
+      ...useEditTodo(todosRef),
     };
   },
 };
@@ -34,16 +35,22 @@ export default {
         <ul class="todo-list">
           <li
             class="todo"
-            :class="{ completed: todo.completed }"
+            :class="{ completed: todo.completed, editing: todo === editingTodoRef }"
             v-for="todo of filteredTodosRef"
             :key="todo.id"
           >
             <div class="view">
               <input class="toggle" type="checkbox" v-model="todo.completed" />
-              <label>{{ todo.title }}</label>
+              <label @dblclick="handleEditTodo(todo)">{{ todo.title }}</label>
               <button class="destroy"></button>
             </div>
-            <input class="edit" type="text" />
+            <input
+              class="edit"
+              type="text"
+              v-model="todo.title"
+              @blur="doneEdit"
+              @keyup.enter="doneEdit"
+            />
           </li>
         </ul>
       </section>
