@@ -30,7 +30,13 @@ export default {
         />
       </header>
       <section class="main">
-        <input id="toggle-all" class="toggle-all" type="checkbox" />
+        <input
+          id="toggle-all"
+          class="toggle-all"
+          type="checkbox"
+          @change="toggleCheckAll"
+          :checked="isCheckAll"
+        />
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
           <li
@@ -50,6 +56,7 @@ export default {
               v-model="todo.title"
               @blur="doneEdit"
               @keyup.enter="doneEdit"
+              @keyup.escape="cancelEdit(todo)"
             />
           </li>
         </ul>
