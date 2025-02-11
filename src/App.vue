@@ -3,6 +3,7 @@ import useTodoList from "./composition/useTodoList";
 import useNewTodo from "./composition/useNewTodo";
 import useFilter from "./composition/useFilter";
 import { useEditTodo } from "./composition/useEditTodo";
+import { ref } from "vue";
 export default {
   setup() {
     return {
@@ -42,20 +43,21 @@ export default {
           <li
             class="todo"
             :class="{ completed: todo.completed, editing: todo === editingTodoRef }"
-            v-for="todo of filteredTodosRef"
+            v-for="(todo, index) of filteredTodosRef"
             :key="todo.id"
           >
             <div class="view">
               <input class="toggle" type="checkbox" v-model="todo.completed" />
-              <label @dblclick="handleEditTodo(todo)">{{ todo.title }}</label>
+              <label @dblclick="handleEditTodo(todo, index)">{{ todo.title }}</label>
               <button class="destroy"></button>
             </div>
             <input
               class="edit"
               type="text"
+              ref="editingInput"
               v-model="todo.title"
-              @blur="doneEdit"
-              @keyup.enter="doneEdit"
+              @blur="doneEdit(todo)"
+              @keyup.enter="doneEdit(todo)"
               @keyup.escape="cancelEdit(todo)"
             />
           </li>

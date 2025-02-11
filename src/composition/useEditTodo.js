@@ -1,15 +1,27 @@
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 
 export function useEditTodo(todosRef) {
   let editingTodoRef = ref(null); //当前正在被修改的todo。
   let originTitle = null; //缓存初始title值。
-  function handleEditTodo(todo) {
-    originTitle = todo.title;
+  const editingInput = ref(null);
+  function handleEditTodo(todo, index) {
+    originTitle = todo.title.trim();
     editingTodoRef.value = todo;
+
+    //双击自动获取焦点：
+    nextTick(() => {
+      editingInput.value[index].focus();
+    });
   }
 
-  function doneEdit(value) {
+  function doneEdit(todo) {
     editingTodoRef.value = null;
+    const title = todo.title.trim();
+    if (title) {
+      todo.title = title;
+    } else {
+      todosRef.value.splice(todosRef.value.indexOf(todo), 1);
+    }
   }
 
   function cancelEdit(todo) {
@@ -33,6 +45,7 @@ export function useEditTodo(todosRef) {
     doneEdit,
     cancelEdit,
     toggleCheckAll,
-    isCheckAll
+    isCheckAll,
+    editingInput,
   };
 }
